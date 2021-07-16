@@ -46,6 +46,7 @@ import de.dennisguse.opentracks.io.file.TrackFileFormat;
 import de.dennisguse.opentracks.io.file.exporter.TrackExporter;
 import de.dennisguse.opentracks.services.TrackRecordingService;
 import de.dennisguse.opentracks.services.handlers.HandlerServer;
+import de.dennisguse.opentracks.services.handlers.LocationHandler;
 import de.dennisguse.opentracks.stats.TrackStatistics;
 
 import static org.junit.Assert.assertEquals;
@@ -113,15 +114,20 @@ public class ExportImportTest {
                 .getService();
 
         HandlerServer handlerServer = service.getHandlerServer();
+        LocationHandler locationHandler = handlerServer.getLocationHandler();
 
         handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:02Z"), ZoneId.of("CET")));
         trackId = service.startNewTrack();
 
         Distance sensorDistance = hasSensorDistance ? Distance.of(5) : null;
 
+        //TODO Send locations to LocationHandler
+        handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:03Z"), ZoneId.of("CET")));
         service.newTrackPoint(createTrackPoint(Instant.parse("2020-02-02T02:02:03Z"), 3, 14, 10, 15, 10, 1, 66, 3, 50, sensorDistance), Distance.of(0));
         service.insertMarker("Marker 1", "Marker 1 category", "Marker 1 desc", null);
+        handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:04Z"), ZoneId.of("CET")));
         service.newTrackPoint(createTrackPoint(Instant.parse("2020-02-02T02:02:04Z"), 3, 14.001, 10, 15, 10, 0, 66, 3, 50, sensorDistance), Distance.of(0));
+        handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:05Z"), ZoneId.of("CET")));
         service.newTrackPoint(createTrackPoint(Instant.parse("2020-02-02T02:02:05Z"), 3, 14.002, 10, 15, 10, 0, 66, 3, 50, sensorDistance), Distance.of(0));
         service.insertMarker("Marker 2", "Marker 2 category", "Marker 2 desc", null);
 
@@ -131,8 +137,12 @@ public class ExportImportTest {
         handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:20Z"), ZoneId.of("CET")));
         service.resumeCurrentTrack();
 
+        handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:21Z"), ZoneId.of("CET")));
         service.newTrackPoint(createTrackPoint(Instant.parse("2020-02-02T02:02:21Z"), 3, 14.003, 10, 15, 10, 0, 66, 3, 50, sensorDistance), Distance.of(0));
+
+        handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:22Z"), ZoneId.of("CET")));
         service.newTrackPoint(createTrackPoint(Instant.parse("2020-02-02T02:02:22Z"), 3, 16, 10, 15, 10, 0, 66, 3, 50, sensorDistance), Distance.of(0));
+        handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:23Z"), ZoneId.of("CET")));
         service.newTrackPoint(createTrackPoint(Instant.parse("2020-02-02T02:02:23Z"), 3, 16.001, 10, 15, 10, 0, 66, 3, 50, sensorDistance), Distance.of(0));
 
         handlerServer.setClock(Clock.fixed(Instant.parse("2020-02-02T02:02:24Z"), ZoneId.of("CET")));
